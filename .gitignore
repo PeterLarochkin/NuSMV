@@ -2,3 +2,5 @@ share
 lib
 include
 bin
+NuSMV*
+.DS*
