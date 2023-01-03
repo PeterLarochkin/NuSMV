@@ -30,9 +30,18 @@ INIT
     !field[1][0] & !field[1][1] & !field[1][2] & !field[1][3] &
     !field[2][0] & !field[2][1] & !field[2][2] & !field[2][3] &
     !field[3][0] & !field[3][1] & !field[3][2] & !field[3][3] &
-    player = third;
+    player = first;
  
 DEFINE 
+
+
+
+all_on :=   field[0][0] & field[0][1] & field[0][2] & field[0][3] &
+            field[1][0] & field[1][1] & field[1][2] & field[1][3] &
+            field[2][0] & field[2][1] & field[2][2] & field[2][3] &
+            field[3][0] & field[3][1] & field[3][2] & field[3][3];
+
+
 -- change_state_k_z  :=  (i=k&j=z) | 
 --                 (player=first | player=second)&((i=(k - 1)&j=(z )) | (i=(k + 1)&j=(z )) | (i=(k )&j=(z - 1)) | (i=(k )&j=(z + 1))) |
 --                 (player=second)&((i=(k - 1)&j=(z - 1)) | (i=(k + 1)&j=(z + 1)) | (i=(k + 1)&j=(z - 1)) | (i=(k - 1)&j=(z + 1))) |
@@ -157,8 +166,11 @@ TRANS
     (next(field[3][3]) = (case change_state_3_3    :!field[3][3]; TRUE                : field[3][3]; esac));
 
 
--- CTLSPEC AG b;
--- CTLSPEC AG (!b -> AX b);
+CTLSPEC EF all_on;
+CTLSPEC E[(!field[3][3]) U all_on];
+-- CTLSPEC E[((player=third) -> (AX (AX (player=second)))) U all_on];
+CTLSPEC AG (EF all_on);
+
 
 
 
