@@ -21,6 +21,7 @@ MODULE main
 VAR 
     field: array 0..3 of array 0..3 of boolean;
     player: {first, second, third};
+    is_previous_first: boolean;
     i: 0..3;
     j: 0..3;
   
@@ -30,6 +31,7 @@ INIT
     !field[1][0] & !field[1][1] & !field[1][2] & !field[1][3] &
     !field[2][0] & !field[2][1] & !field[2][2] & !field[2][3] &
     !field[3][0] & !field[3][1] & !field[3][2] & !field[3][3] &
+    is_previous_first = FALSE &
     player = first;
  
 DEFINE 
@@ -41,7 +43,7 @@ all_on :=   field[0][0] & field[0][1] & field[0][2] & field[0][3] &
             field[2][0] & field[2][1] & field[2][2] & field[2][3] &
             field[3][0] & field[3][1] & field[3][2] & field[3][3];
 
-
+-- TEMPLATE
 -- change_state_k_z  :=  (i=k&j=z) | 
 --                 (player=first | player=second)&((i=(k - 1)&j=(z )) | (i=(k + 1)&j=(z )) | (i=(k )&j=(z - 1)) | (i=(k )&j=(z + 1))) |
 --                 (player=second)&((i=(k - 1)&j=(z - 1)) | (i=(k + 1)&j=(z + 1)) | (i=(k + 1)&j=(z - 1)) | (i=(k - 1)&j=(z + 1))) |
@@ -138,8 +140,10 @@ change_state_3_3  :=  (i=3&j=3) |
 
 
 TRANS
+    (
+        next(is_previous_first) = (player = first)
+    ) &
     (   
-        
         (((next(player) = second) & (player = first)) | 
         ((next(player) = third) & (player = second)) | 
         (((next(player) = first) | (next(player) = second)) & (player = third))) 
@@ -166,17 +170,26 @@ TRANS
     (next(field[3][3]) = (case change_state_3_3    :!field[3][3]; TRUE                : field[3][3]; esac));
 
 
+-- 1. Игроки могут зажечь все лампочки.
 CTLSPEC EF all_on;
+
+-- 2. Игроки могут зажечь все лампочки так, чтобы правая верхняя лампочка до последнего хода всегда была выключена.
 CTLSPEC E[(!field[3][3]) U all_on];
--- CTLSPEC E[((player=third) -> (AX (AX (player=second)))) U all_on];
+
+-- 3. Игроки могут зажечь все лампочки, даже если третий игрок всегда выбирает первого следующим.
+CTLSPEC E[((player=second)->is_previous_first)  U all_on];
+
+-- 4. Как бы игроки ни выбирали лампочки до текущего момента, они обязательно имеют возможность продолжить выбирать лампочки так, чтобы зажечь их все.
 CTLSPEC AG (EF all_on);
 
 
-
-
 -- Usage
--- NuSMV/bin/NuSMV -int hw.smv 
+-- interactive mode
+-- NuSMV/bin/NuSMV -int lamps.smv 
 -- go
 -- pick_state -i -a
 -- print_current_state -v
 -- simulate -i -k 5
+
+-- verify
+-- NuSMV/bin/NuSMV lamps.smv 
