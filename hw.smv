@@ -19,45 +19,24 @@
 
 MODULE main
 VAR 
-    field: array 0..2 of array 0..2 of boolean;
+    field: array 0..3 of array 0..3 of boolean;
     player: {first, second, third};
-    i: 0..2;
-    j: 0..2;
-    -- j-1: 0..1;
-    -- jp1: 1..2;
-    -- i-1: 0..1;
-    -- ip1: 1..2;
-    -- j-2: 0..0;
-    -- jp2: 2..2;
-    
-    
+    i: 0..3;
+    j: 0..3;
+  
 INIT 
     
-    !field[0][0] & !field[0][1] & !field[0][2] & --!field[0][3] &
-    !field[1][0] & !field[1][1] & !field[1][2] & --!field[1][3] &
-    !field[2][0] & !field[2][1] & !field[2][2] & --!field[2][3] &
-    -- !field[3][0] & !field[3][1] & --!field[3][2] & !field[3][3] &
-    player = third ;
-    -- &
-    -- (
-    --     case 
-    --         i = 0 : (i-1 = 0) & (ip1 = 1);
-    --         i = 1 : (i-1 = 0) & (ip1 = 2);
-    --         i = 2 : (i-1 = 1) & (ip1 = 2);
-    --     esac
-    -- )& 
-    -- (
-    --     case 
-    --         j = 0 : (j-1 = 0) & (j-2 = 0) & (jp2 = 2) & (jp1 = 1);
-    --         j = 1 : (j-1 = 0) & (j-2 = 0) & (jp2 = 2) & (jp1 = 2);
-    --         j = 2 : (j-1 = 1) & (j-2 = 0) & (jp2 = 2) & (jp1 = 2);
-    --     esac
-    -- ) 
+    !field[0][0] & !field[0][1] & !field[0][2] & !field[0][3] &
+    !field[1][0] & !field[1][1] & !field[1][2] & !field[1][3] &
+    !field[2][0] & !field[2][1] & !field[2][2] & !field[2][3] &
+    !field[3][0] & !field[3][1] & !field[3][2] & !field[3][3] &
+    player = third;
+ 
 DEFINE 
 -- change_state_k_z  :=  (i=k&j=z) | 
---                 (player=first | player=second)&(i=(k - 1)&j=(z ))&(i=(k + 1)&j=(z ))&(i=(k )&j=(z - 1))&(i=(k )&j=(z + 1)) |
---                 (player=second)&(i=(k - 1)&j=(z - 1))&(i=(k + 1)&j=(z + 1))&(i=(k + 1)&j=(z - 1))&(i=(k - 1)&j=(z + 1)) |
---                 (player=third)&(i=(k )&j=(z - 1))&(i=(k )&j=(z + 1))&(i=(k )&j=(z - 2))&(i=(k )&j=(z + 2));
+--                 (player=first | player=second)&((i=(k - 1)&j=(z )) | (i=(k + 1)&j=(z )) | (i=(k )&j=(z - 1)) | (i=(k )&j=(z + 1))) |
+--                 (player=second)&((i=(k - 1)&j=(z - 1)) | (i=(k + 1)&j=(z + 1)) | (i=(k + 1)&j=(z - 1)) | (i=(k - 1)&j=(z + 1))) |
+--                 (player=third)&((i=(k )&j=(z - 1)) | (i=(k )&j=(z + 1)) | (i=(k )&j=(z - 2)) | (i=(k )&j=(z + 2)));
 
 change_state_0_0  :=  (i=0&j=0) | 
                 (player=first | player=second)&((i=(0 - 1)&j=(0 )) | (i=(0 + 1)&j=(0 )) | (i=(0 )&j=(0 - 1)) | (i=(0 )&j=(0 + 1))) |
@@ -75,6 +54,14 @@ change_state_0_2  :=  (i=0&j=2) |
                 (player=third)&((i=(0 )&j=(2 - 1)) | (i=(0 )&j=(2 + 1)) | (i=(0 )&j=(2 - 2)) | (i=(0 )&j=(2 + 2)));
 
 
+change_state_0_3  :=  (i=0&j=3) | 
+                (player=first | player=second)&((i=(0 - 1)&j=(3 )) | (i=(0 + 1)&j=(3 )) | (i=(0 )&j=(3 - 1)) | (i=(0 )&j=(3 + 1))) |
+                (player=second)&((i=(0 - 1)&j=(3 - 1)) | (i=(0 + 1)&j=(3 + 1)) | (i=(0 + 1)&j=(3 - 1)) | (i=(0 - 1)&j=(3 + 1))) |
+                (player=third)&((i=(0 )&j=(3 - 1)) | (i=(0 )&j=(3 + 1)) | (i=(0 )&j=(3 - 2)) | (i=(0 )&j=(3 + 2)));
+
+
+
+
 change_state_1_0  :=  (i=1&j=0) | 
                 (player=first | player=second)&((i=(1 - 1)&j=(0 )) | (i=(1 + 1)&j=(0 )) | (i=(1 )&j=(0 - 1)) | (i=(1 )&j=(0 + 1))) |
                 (player=second)&((i=(1 - 1)&j=(0 - 1)) | (i=(1 + 1)&j=(0 + 1)) | (i=(1 + 1)&j=(0 - 1)) | (i=(1 - 1)&j=(0 + 1))) |
@@ -89,6 +76,14 @@ change_state_1_2  :=  (i=1&j=2) |
                 (player=first | player=second)&((i=(1 - 1)&j=(2 )) | (i=(1 + 1)&j=(2 )) | (i=(1 )&j=(2 - 1)) | (i=(1 )&j=(2 + 1))) |
                 (player=second)&((i=(1 - 1)&j=(2 - 1)) | (i=(1 + 1)&j=(2 + 1)) | (i=(1 + 1)&j=(2 - 1)) | (i=(1 - 1)&j=(2 + 1))) |
                 (player=third)&((i=(1 )&j=(2 - 1)) | (i=(1 )&j=(2 + 1)) | (i=(1 )&j=(2 - 2)) | (i=(1 )&j=(2 + 2)));
+
+change_state_1_3  :=  (i=1&j=3) | 
+                (player=first | player=second)&((i=(1 - 1)&j=(3 )) | (i=(1 + 1)&j=(3 )) | (i=(1 )&j=(3 - 1)) | (i=(1 )&j=(3 + 1))) |
+                (player=second)&((i=(1 - 1)&j=(3 - 1)) | (i=(1 + 1)&j=(3 + 1)) | (i=(1 + 1)&j=(3 - 1)) | (i=(1 - 1)&j=(3 + 1))) |
+                (player=third)&((i=(1 )&j=(3 - 1)) | (i=(1 )&j=(3 + 1)) | (i=(1 )&j=(3 - 2)) | (i=(1 )&j=(3 + 2)));
+
+
+
 
 
 change_state_2_0  :=  (i=2&j=0) | 
@@ -106,56 +101,70 @@ change_state_2_2  :=  (i=2&j=2) |
                 (player=second)&((i=(2 - 1)&j=(2 - 1)) | (i=(2 + 1)&j=(2 + 1)) | (i=(2 + 1)&j=(2 - 1)) | (i=(2 - 1)&j=(2 + 1))) |
                 (player=third)&((i=(2 )&j=(2 - 1)) | (i=(2 )&j=(2 + 1)) | (i=(2 )&j=(2 - 2)) | (i=(2 )&j=(2 + 2)));
 
+change_state_2_3  :=  (i=2&j=3) | 
+                (player=first | player=second)&((i=(2 - 1)&j=(3 )) | (i=(2 + 1)&j=(3 )) | (i=(2 )&j=(3 - 1)) | (i=(2 )&j=(3 + 1))) |
+                (player=second)&((i=(2 - 1)&j=(3 - 1)) | (i=(2 + 1)&j=(3 + 1)) | (i=(2 + 1)&j=(3 - 1)) | (i=(2 - 1)&j=(3 + 1))) |
+                (player=third)&((i=(2 )&j=(3 - 1)) | (i=(2 )&j=(3 + 1)) | (i=(2 )&j=(3 - 2)) | (i=(2 )&j=(3 + 2)));
+
+
+change_state_3_0  :=  (i=3&j=0) | 
+                (player=first | player=second)&((i=(3 - 1)&j=(0 )) | (i=(3 + 1)&j=(0 )) | (i=(3 )&j=(0 - 1)) | (i=(3 )&j=(0 + 1))) |
+                (player=second)&((i=(3 - 1)&j=(0 - 1)) | (i=(3 + 1)&j=(0 + 1)) | (i=(3 + 1)&j=(0 - 1)) | (i=(3 - 1)&j=(0 + 1))) |
+                (player=third)&((i=(3 )&j=(0 - 1)) | (i=(3 )&j=(0 + 1)) | (i=(3 )&j=(0 - 2)) | (i=(3 )&j=(0 + 2)));
+
+change_state_3_1  :=  (i=3&j=1) | 
+                (player=first | player=second)&((i=(3 - 1)&j=(1 )) | (i=(3 + 1)&j=(1 )) | (i=(3 )&j=(1 - 1)) | (i=(3 )&j=(1 + 1))) |
+                (player=second)&((i=(3 - 1)&j=(1 - 1)) | (i=(3 + 1)&j=(1 + 1)) | (i=(3 + 1)&j=(1 - 1)) | (i=(3 - 1)&j=(1 + 1))) |
+                (player=third)&((i=(3 )&j=(1 - 1)) | (i=(3 )&j=(1 + 1)) | (i=(3 )&j=(1 - 2)) | (i=(3 )&j=(1 + 2)));
+
+change_state_3_2  :=  (i=3&j=2) | 
+                (player=first | player=second)&((i=(3 - 1)&j=(2 )) | (i=(3 + 1)&j=(2 )) | (i=(3 )&j=(2 - 1)) | (i=(3 )&j=(2 + 1))) |
+                (player=second)&((i=(3 - 1)&j=(2 - 1)) | (i=(3 + 1)&j=(2 + 1)) | (i=(3 + 1)&j=(2 - 1)) | (i=(3 - 1)&j=(2 + 1))) |
+                (player=third)&((i=(3 )&j=(2 - 1)) | (i=(3 )&j=(2 + 1)) | (i=(3 )&j=(2 - 2)) | (i=(3 )&j=(2 + 2)));
+
+change_state_3_3  :=  (i=3&j=3) | 
+                (player=first | player=second)&((i=(3 - 1)&j=(3 )) | (i=(3 + 1)&j=(3 )) | (i=(3 )&j=(3 - 1)) | (i=(3 )&j=(3 + 1))) |
+                (player=second)&((i=(3 - 1)&j=(3 - 1)) | (i=(3 + 1)&j=(3 + 1)) | (i=(3 + 1)&j=(3 - 1)) | (i=(3 - 1)&j=(3 + 1))) |
+                (player=third)&((i=(3 )&j=(3 - 1)) | (i=(3 )&j=(3 + 1)) | (i=(3 )&j=(3 - 2)) | (i=(3 )&j=(3 + 2)));
+
+
 TRANS
     (   
         
         (((next(player) = second) & (player = first)) | 
         ((next(player) = third) & (player = second)) | 
-        (((next(player) = first)) & (player = third))) 
+        (((next(player) = first) | (next(player) = second)) & (player = third))) 
     ) &
 
     (next(field[0][0]) = (case change_state_0_0    :!field[0][0]; TRUE                : field[0][0]; esac)) & 
     (next(field[0][1]) = (case change_state_0_1    :!field[0][1]; TRUE                : field[0][1]; esac)) & 
     (next(field[0][2]) = (case change_state_0_2    :!field[0][2]; TRUE                : field[0][2]; esac)) & 
+    (next(field[0][3]) = (case change_state_0_3    :!field[0][3]; TRUE                : field[0][3]; esac)) & 
 
     (next(field[1][0]) = (case change_state_1_0    :!field[1][0]; TRUE                : field[1][0]; esac)) & 
     (next(field[1][1]) = (case change_state_1_1    :!field[1][1]; TRUE                : field[1][1]; esac)) & 
     (next(field[1][2]) = (case change_state_1_2    :!field[1][2]; TRUE                : field[1][2]; esac)) & 
+    (next(field[1][3]) = (case change_state_1_3    :!field[1][3]; TRUE                : field[1][3]; esac)) &
 
     (next(field[2][0]) = (case change_state_2_0    :!field[2][0]; TRUE                : field[2][0]; esac)) & 
     (next(field[2][1]) = (case change_state_2_1    :!field[2][1]; TRUE                : field[2][1]; esac)) & 
-    (next(field[2][2]) = (case change_state_2_2    :!field[2][2]; TRUE                : field[2][2]; esac));
+    (next(field[2][2]) = (case change_state_2_2    :!field[2][2]; TRUE                : field[2][2]; esac)) &
+    (next(field[2][3]) = (case change_state_2_3    :!field[2][3]; TRUE                : field[2][3]; esac)) &
+
+    (next(field[3][0]) = (case change_state_3_0    :!field[3][0]; TRUE                : field[3][0]; esac)) & 
+    (next(field[3][1]) = (case change_state_3_1    :!field[3][1]; TRUE                : field[3][1]; esac)) & 
+    (next(field[3][2]) = (case change_state_3_2    :!field[3][2]; TRUE                : field[3][2]; esac)) &
+    (next(field[3][3]) = (case change_state_3_3    :!field[3][3]; TRUE                : field[3][3]; esac));
 
 
 -- CTLSPEC AG b;
 -- CTLSPEC AG (!b -> AX b);
 
--- read_model
--- flatten_hierarchy
--- encode_variables
--- build_model
+
+
+-- Usage
+-- NuSMV/bin/NuSMV -int hw.smv 
+-- go
 -- pick_state -i -a
 -- print_current_state -v
 -- simulate -i -k 5
-
-
-
-
-
-
--- EXAMPLE
--- MODULE main
--- VAR b: boolean;
--- INIT b;
--- TRANS next(b) = !b;
--- CTLSPEC AG b;
--- CTLSPEC AG (!b -> AX b);
-
-
-
-
-
-
-
-
--- NuSMV/bin/NuSMV
